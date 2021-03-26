@@ -1,0 +1,32 @@
+name: Rails Images
+
+on:
+  push:
+  schedule:
+  - cron: 0 3 * * 0
+
+jobs:
+  versions:
+    name: Versions List
+    runs_on: ubuntu-20.04
+    outputs:
+      matrix: ${{ steps.versions.outputs.versions }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - run: |
+        VERSIONS=$((cd rails && find * -type d -depth 0) | jq -R | jq -sc '{version: .})
+        echo ::set-output name=versions::${VERSIONS}
+
+  base_images:
+    name: Base Images
+    needs:
+    - versions
+    strategy:
+      matrix: { version: [2.7.2, 3.0.0] }
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - run: echo ${{ matrix.version }}
+  # dev_images:
+  #   needs: base_images
