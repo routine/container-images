@@ -48,6 +48,6 @@ jobs:
     - name: Development Image
       uses: docker/build-push-action@v2
       with:
-        context: rails/${{ matrix.version }}
+        context: rails/${{ matrix.version }}/dev
         push: true
         tags: ${{ secrets.DOCKER_REGISTRY}}/rails:${{ matrix.version }}-dev
