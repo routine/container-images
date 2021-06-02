@@ -2,6 +2,8 @@ name: Rails Images
 
 on:
   push:
+    branches:
+    - main
 
 jobs:
   versions:
