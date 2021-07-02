@@ -1,4 +1,12 @@
 {
+  "enabled": true,
+  "timezone": "America/Chicago",
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard",
+  "suppressNotifications": ["prIgnoreNotification"],
+  "commitMessageSuffix": "[ci-skip]",
+  "rebaseWhen": "conflicted,",
+  "assignees": ["@zacheryph"],
   "extends": [
     "config:base",
     "docker:disableMajor"
