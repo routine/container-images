@@ -1,4 +1,4 @@
-FROM ghcr.io/routine/rails:2.7.2
+FROM ghcr.io/routine/rails:3.0.0
 
 RUN apk add --no-cache \
   build-base python3 less git \
