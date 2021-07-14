@@ -5,17 +5,11 @@
   "dependencyDashboardTitle": "Renovate Dashboard",
   "suppressNotifications": ["prIgnoreNotification"],
   "commitMessageSuffix": "[ci-skip]",
-  "rebaseWhen": "conflicted,",
+  "rebaseWhen": "conflicted",
   "assignees": ["@zacheryph"],
   "extends": [
     "config:base",
-    "docker:disableMajor"
-  ],
-  "packageRules": [
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["ruby"],
-      "matchUpdateTypes": ["patch"]
-    }
+    "docker:disableMajor",
+    "docker:pinDigests"
   ]
 }
