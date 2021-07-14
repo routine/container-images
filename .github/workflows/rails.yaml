@@ -10,21 +10,36 @@ jobs:
     name: Versions List
     runs-on: ubuntu-20.04
     outputs:
-      matrix: ${{ steps.versions.outputs.versions }}
+      changed: ${{ steps.filter.outputs.changed }}
+      matrix: ${{ steps.versions.outputs.matrix }}
     steps:
-    - name: Checkout
+    - id: checkout
       uses: actions/checkout@v2
+    - id: filter
+      uses: dorny/paths-filter@v2
+      with:
+        base: ${{ github.ref }}
+        list-files: shell
+        filters: |
+          changed:
+            added|modified: 'rails/**'
     - id: versions
+      if: steps.filter.outputs.changed == 'true'
       run: |
-        VERSIONS=$((cd rails && find * -maxdepth 0 -type d) | jq -R | jq -sc '{version: .}')
-        echo ${VERSIONS}
-        echo ::set-output name=versions::${VERSIONS}
+        VERS=()
+        PATHS=(${{ steps.filter.outputs.changed_files }})
+        for p in "${PATHS[@]}" ; do
+          IFS='/' read -r -a parts <<< "$p"
+          VERS+=("${parts[1]}")
+        done
 
-  base-image:
-    name: Rails Image
+        MATRIX=$(echo "${VERS[@]}" | tr ' ' '\n' | sort -u | jq -R | jq -sc '{version: .}')
+        echo ::set-output name=matrix::${MATRIX}
+
+  docker-images:
     runs-on: ubuntu-20.04
-    needs:
-    - versions
+    needs: versions
+    if: ${{ needs.versions.outputs.changed == 'true' }}
     strategy:
       matrix: ${{ fromJson(needs.versions.outputs.matrix) }}
     steps:
