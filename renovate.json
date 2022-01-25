@@ -9,7 +9,6 @@
   "assignees": ["@zacheryph"],
   "extends": [
     "config:base",
-    "docker:disableMajor",
-    "docker:pinDigests"
+    "docker:disableMajor"
   ]
 }
