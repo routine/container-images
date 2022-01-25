@@ -30,7 +30,7 @@ jobs:
         PATHS=(${{ steps.filter.outputs.changed_files }})
         for p in "${PATHS[@]}" ; do
           IFS='/' read -r -a parts <<< "$p"
-          IMAGES+=("${parts[0]}/${parts[1]}")
+          IMAGES+=("${parts[1]}")
         done
 
         MATRIX=$(echo "${IMAGES[@]}" | tr ' ' '\n' | sort -u | jq -R | jq -sc '{context: .}')
@@ -60,7 +60,7 @@ jobs:
     - name: base image
       uses: docker/build-push-action@v2
       with:
-        context: ${{ matrix.context }}
+        context: rails/${{ matrix.context }}
         platforms: linux/amd64,linux/arm64
         push: true
         tags: |
