@@ -34,7 +34,8 @@ jobs:
         done
 
         MATRIX=$(echo "${IMAGES[@]}" | tr ' ' '\n' | sort -u | jq -R | jq -sc '{context: .}')
-        echo ::set-output name=matrix::${MATRIX}
+        echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
+
 
   docker-images:
     runs-on: ubuntu-22.04
