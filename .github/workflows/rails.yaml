@@ -8,7 +8,7 @@ on:
 jobs:
   changes:
     name: image list
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     outputs:
       changed: ${{ steps.filter.outputs.changed }}
       matrix: ${{ steps.images.outputs.matrix }}
@@ -38,7 +38,7 @@ jobs:
 
 
   docker-images:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: changes
     if: ${{ needs.changes.outputs.changed == 'true' }}
     strategy:
