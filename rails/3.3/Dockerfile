@@ -1,4 +1,4 @@
-FROM ruby:3.3-alpine@sha256:0bf4169697f44df52cea27b0ceb1a3b715b168625b7c404202e2dfe31dee25e2
+FROM ruby:3.3-alpine@sha256:d04c1312316d7f55893c13f6ddb1d98d0e93eba273f50d0df0bd98b26552b5af
 
 # Dependencies
 RUN apk add --no-cache gcompat tzdata shared-mime-info libpq
