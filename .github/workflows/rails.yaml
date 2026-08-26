@@ -4,18 +4,25 @@ on:
   push:
     branches:
     - main
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: 'Rails versions to rebuild, space or comma separated (e.g. "3.2 3.3 3.4")'
+        required: true
+        type: string
 
 jobs:
   changes:
     name: image list
     runs-on: ubuntu-24.04
     outputs:
-      changed: ${{ steps.filter.outputs.changed }}
+      changed: ${{ steps.images.outputs.changed }}
       matrix: ${{ steps.images.outputs.matrix }}
     steps:
     - id: checkout
       uses: actions/checkout@v7
     - id: filter
+      if: github.event_name != 'workflow_dispatch'
       uses: dorny/paths-filter@v4
       with:
         base: ${{ github.ref }}
@@ -24,16 +31,27 @@ jobs:
           changed:
             added|modified: 'rails/**'
     - id: images
-      if: steps.filter.outputs.changed == 'true'
+      env:
+        VERSIONS_INPUT: ${{ inputs.versions }}
       run: |
-        VERS=()
-        PATHS=(${{ steps.filter.outputs.changed_files }})
-        for p in "${PATHS[@]}" ; do
-          IFS='/' read -r -a parts <<< "$p"
-          IMAGES+=("${parts[1]}")
-        done
+        IMAGES=()
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          IMAGES=(${VERSIONS_INPUT//,/ })
+        elif [ "${{ steps.filter.outputs.changed }}" = "true" ]; then
+          PATHS=(${{ steps.filter.outputs.changed_files }})
+          for p in "${PATHS[@]}" ; do
+            IFS='/' read -r -a parts <<< "$p"
+            IMAGES+=("${parts[1]}")
+          done
+        fi
+
+        if [ ${#IMAGES[@]} -eq 0 ]; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+          exit 0
+        fi
 
         MATRIX=$(echo "${IMAGES[@]}" | tr ' ' '\n' | sort -u | jq -R | jq -sc '{context: .}')
+        echo "changed=true" >> $GITHUB_OUTPUT
         echo "matrix=${MATRIX}" >> $GITHUB_OUTPUT
 
 
